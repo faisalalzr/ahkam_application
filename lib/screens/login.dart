@@ -31,18 +31,27 @@ class _LoginScreenState extends State<LoginScreen> {
         password: password,
       );
 
-      var AnyUser = userCredential.user;
+      User? AnyUser = userCredential.user;
 
-      DocumentSnapshot userDoc =
-          await _firestore.collection('account').doc(AnyUser!.uid).get();
+      QuerySnapshot userQuery = await _firestore
+          .collection('account')
+          .where('email', isEqualTo: email)
+          .limit(1)
+          .get();
 
-      bool isLawyer = userDoc.get('isLawyer');
+      if (userQuery.docs.isEmpty)
+        throw Exception("User not found in Firestore");
+
+      DocumentSnapshot userDoc = userQuery.docs.first;
+      bool isLawyer =
+          (userDoc.data() as Map<String, dynamic>?)?['isLawyer'] ?? false;
 
       if (userDoc.exists) {
-        if (isLawyer) {
-          Get.to(LawyerHomeScreen(lawyer: Lawyer(email: email)));
+        if (isLawyer == true) {
+          Get.offAll(
+              () => LawyerHomeScreen(lawyer: Lawyer(email: AnyUser!.email!)));
         } else {
-          Get.to(() => HomeScreen(account: Account(email: AnyUser.email!)));
+          Get.to(() => HomeScreen(account: Account(email: AnyUser!.email!)));
         }
       }
     } catch (e) {

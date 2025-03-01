@@ -9,7 +9,7 @@ class Account {
   String? profileImage;
 
   Account({
-    this.uid, // Ensure to pass uid in constructor
+    this.uid,
     this.name,
     required this.email,
     this.number,

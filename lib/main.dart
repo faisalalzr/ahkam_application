@@ -28,7 +28,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-        debugShowCheckedModeBanner: false, home: LoginScreen());
+        theme: ThemeData(
+            primaryColor: Color(0xFFF5EEDC),
+            scaffoldBackgroundColor: Colors.white,
+            buttonTheme: ButtonThemeData(
+              buttonColor: Color(0xFFF5EEDC),
+            )),
+        debugShowCheckedModeBanner: false,
+        home: LoginScreen());
     //HomeScreen(user: user));
   }
 }

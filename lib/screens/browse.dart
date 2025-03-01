@@ -13,7 +13,7 @@ class BrowseLawyersScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Browse Lawyers")),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('lawyers').snapshots(),
+        stream: _firestore.collection('account').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());

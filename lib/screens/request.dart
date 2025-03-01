@@ -23,8 +23,7 @@ class _requestsScreenState extends State<requestsScreen> {
   final FirebaseFirestore _lawyerDb = FirebaseFirestore.instance;
 
   Future<List<Map<String, dynamic>>> fetchLawyerRequests() async {
-    QuerySnapshot querySnapshot =
-        await _lawyerDb.collection('lawyerRequest').get();
+    QuerySnapshot querySnapshot = await _lawyerDb.collection('requests').get();
 
     return querySnapshot.docs
         .map((doc) => doc.data() as Map<String, dynamic>)
@@ -84,11 +83,11 @@ class _requestsScreenState extends State<requestsScreen> {
 
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(request['profileImage']),
-                ),
-                title: Text(request['name'],
+                    //     backgroundImage: NetworkImage(request['profileImage']),
+                    ),
+                title: Text(request['name'] ?? 'name',
                     style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(request['specialization']),
+                subtitle: Text(request['specialization'] ?? 'specs'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -108,7 +107,7 @@ class _requestsScreenState extends State<requestsScreen> {
                         icon: Icon(Icons.cancel, color: Colors.red),
                         onPressed: () async {
                           await _lawyerDb
-                              .collection('lawyerRequest')
+                              .collection('requests')
                               .doc(request['id'])
                               .delete();
                           setState(() {});

@@ -21,105 +21,96 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Lawyer Dashboard',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.menu),
+          color: Colors.black,
         ),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Welcome Banner
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.deepPurple, Colors.indigo],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 28,
-                    /* backgroundImage: NetworkImage(
-                        widget.lawyer['profileImage'] ??
-                            "https://via.placeholder.com/150"),*/
-                  ),
-                  SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Welcome, ${widget.lawyer.name ?? 'Lawyer'}",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        widget.lawyer.specialization ?? "Legal Expert",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ],
-                  )
-                ],
+            CircleAvatar(
+              radius: 18,
+              /* backgroundImage: NetworkImage(
+                          widget.lawyer['profileImage'] ??
+                              "https://via.placeholder.com/150"),*/
+            ),
+            SizedBox(width: 12),
+            Text(
+              "Welcome, ${widget.lawyer.name ?? 'Lawyer'}",
+              style: TextStyle(
+                color: const Color.fromARGB(255, 0, 0, 0),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-
-            SizedBox(height: 20),
-
-            // Status Section
-            Text('Case Status',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                StatusBadge(
-                    label: 'Finished',
-                    color: Colors.green,
-                    icon: LucideIcons.checkCircle),
-                StatusBadge(
-                    label: 'Waiting',
-                    color: Colors.orange,
-                    icon: LucideIcons.timer),
-                StatusBadge(
-                    label: 'Active',
-                    color: Colors.blue,
-                    icon: LucideIcons.briefcase),
-              ],
-            ),
-
-            SizedBox(height: 20),
-
-            // Lawsuits List
-            Text('Your Cases',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Expanded(
-              child: lawsuits.isEmpty
-                  ? Center(child: Text("No active cases yet."))
-                  : ListView.builder(
-                      itemCount: lawsuits.length,
-                      itemBuilder: (context, index) {
-                        final caseData = lawsuits[index];
-                        return LawsuitCard(
-                            title: caseData["title"]!,
-                            status: caseData["status"]!);
-                      },
-                    ),
-            ),
+            SizedBox(width: 12),
+            /* Text(
+              widget.lawyer.specialization ?? "Legal Expert",
+              style: TextStyle(
+                  color: const Color.fromARGB(179, 0, 0, 0), fontSize: 16),
+            ),*/
           ],
         ),
+        backgroundColor: Color(0xFFF5EEDC),
+        foregroundColor: Colors.white,
+        centerTitle: false,
       ),
+      body: Stack(children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+
+              // Status Section
+              Text('Case Status',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  StatusBadge(
+                      label: 'Finished',
+                      color: Colors.green,
+                      icon: LucideIcons.checkCircle),
+                  StatusBadge(
+                      label: 'Waiting',
+                      color: Colors.orange,
+                      icon: LucideIcons.timer),
+                  StatusBadge(
+                      label: 'Active',
+                      color: Colors.blue,
+                      icon: LucideIcons.briefcase),
+                ],
+              ),
+
+              SizedBox(height: 20),
+
+              // Lawsuits List
+              Text('Your Cases',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Expanded(
+                child: lawsuits.isEmpty
+                    ? Center(child: Text("No active cases yet."))
+                    : ListView.builder(
+                        itemCount: lawsuits.length,
+                        itemBuilder: (context, index) {
+                          final caseData = lawsuits[index];
+                          return LawsuitCard(
+                              title: caseData["title"]!,
+                              status: caseData["status"]!);
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ]),
     );
   }
 }

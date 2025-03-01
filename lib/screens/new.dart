@@ -31,6 +31,7 @@ class _NewState extends State<New> {
   final TextEditingController _licenseNoController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController provinceCont = TextEditingController();
+  final TextEditingController descController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +131,8 @@ class _NewState extends State<New> {
                           exp: int.parse(_experienceController.text),
                           province: provinceCont.text,
                           specialization: _selectedProfession,
-                          isLawyer: issLawyer
+                          isLawyer: issLawyer,
+                          desc: descController.text
                           //    pic: imageUrl.isNotEmpty ? imageUrl : "default_url_here",
                           );
                       jimmy.addToFirestore();
@@ -207,6 +209,8 @@ class _NewState extends State<New> {
           const SizedBox(height: 20),
           _buildInputField("Years of Experience", _experienceController,
               keyboardType: TextInputType.number),
+          const SizedBox(height: 20),
+          _buildInputField('Description', descController),
           const SizedBox(height: 20),
           _buildInputField("License Number", _licenseNoController),
           const SizedBox(height: 20),

@@ -18,6 +18,7 @@ class Lawyer extends Account {
   final String? pic;
   @override
   bool? isLawyer;
+  final String? desc;
 
   Lawyer(
       {this.uid,
@@ -30,7 +31,8 @@ class Lawyer extends Account {
       this.licenseNO,
       this.exp,
       this.pic,
-      this.isLawyer})
+      this.isLawyer,
+      this.desc})
       : super(email: email);
 
   @override
@@ -46,7 +48,8 @@ class Lawyer extends Account {
       'licenseNO': licenseNO,
       'exp': exp,
       'pic': pic,
-      'isLawyer': isLawyer
+      'isLawyer': isLawyer,
+      'desc': desc
     };
   }
 
@@ -62,7 +65,8 @@ class Lawyer extends Account {
         licenseNO: map['licenceNO'],
         exp: map['exp'],
         pic: map['pic'],
-        isLawyer: map['isLawyer']);
+        isLawyer: map['isLawyer'],
+        desc: map['desc']);
   }
 
 // Firestore collection reference

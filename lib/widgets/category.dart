@@ -1,4 +1,7 @@
+import 'package:chat/screens/browse.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 import 'package:lucide_icons/lucide_icons.dart';
 
 class Category {
@@ -22,20 +25,25 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 246, 236, 206),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(category.icon, size: 32, color: Colors.brown),
-          SizedBox(height: 5),
-          Text(category.name,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-        ],
+    return GestureDetector(
+      onTap: () {
+        Get.to(BrowseLawyersScreen());
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 246, 236, 206),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(category.icon, size: 32, color: Colors.brown),
+            SizedBox(height: 5),
+            Text(category.name,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
   }

@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+
       switch (_selectedIndex) {
         case 0:
           Get.to(NotificationsScreen(account: widget.account));
@@ -200,21 +201,23 @@ class _HomeScreenState extends State<HomeScreen>
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Color(0xFFF5EEDC),
+          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
           unselectedItemColor: Colors.grey,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(LucideIcons.bell), label: "Notifications"),
+              icon: Icon(LucideIcons.bell),
+              label: "Notifications",
+            ),
             BottomNavigationBarItem(
-                icon: Icon(LucideIcons.wallet), label: "Wallet"),
+              icon: Icon(LucideIcons.wallet),
+              label: "Wallet",
+            ),
             BottomNavigationBarItem(
                 icon: Icon(LucideIcons.messageCircle), label: "Chat"),
             BottomNavigationBarItem(
                 icon: Icon(LucideIcons.clipboardList), label: "Requests"),
             BottomNavigationBarItem(
-              icon: Icon(LucideIcons.home),
-              label: "Home",
-            ),
+                icon: Icon(LucideIcons.home), label: "Home"),
           ],
         ),
       ),
