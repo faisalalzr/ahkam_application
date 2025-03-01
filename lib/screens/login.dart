@@ -69,10 +69,18 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
-        title: Text("AHKAM", style: TextStyle(fontWeight: FontWeight.bold)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
+        toolbarHeight: 100,
+        title: Text("AHKAM",
+            style: TextStyle(
+              fontSize: 40,
+              fontFamily: 'Times New Roman',
+              color: Color.fromARGB(255, 255, 255, 255),
+            )),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Color(0xFFF5EEDC),
+        backgroundColor: Color.fromARGB(255, 72, 47, 0),
         automaticallyImplyLeading: false,
       ),
       body: Padding(
@@ -92,11 +100,13 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(
+                  size: 21,
                   Icons.email,
-                  color: Color.fromARGB(255, 0, 0, 0),
+                  color: Color.fromARGB(255, 72, 47, 0),
                 ),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 filled: true,
                 fillColor: Colors.white,
               ),
@@ -108,8 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                 labelText: 'Password',
                 prefixIcon: Icon(
+                  size: 21,
                   Icons.lock,
-                  color: Color.fromARGB(255, 0, 0, 0),
+                  color: Color.fromARGB(255, 72, 47, 0),
                 ),
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -122,29 +133,31 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: _login,
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Color(0xFFF5EEDC),
+                backgroundColor: Color.fromARGB(255, 72, 47, 0),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(20)),
               ),
               child: Text(
                 'Login',
                 style: TextStyle(
                   fontSize: 18,
-                  color: const Color.fromARGB(255, 0, 0, 0),
+                  color: Color.fromARGB(255, 255, 255, 255),
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             SizedBox(height: 16),
-            TextButton(
-              onPressed: () => Get.to(RegisterScreen()),
-              child: Text(
-                'Don’t have an account? Sign Up',
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                    fontWeight: FontWeight.normal),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Don't have an account?"),
+                TextButton(
+                  onPressed: () {
+                    Get.to(RegisterScreen());
+                  },
+                  child: Text("sign up"),
+                ),
+              ],
             ),
           ],
         ),

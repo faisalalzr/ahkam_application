@@ -92,12 +92,15 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               Text("Welcome",
                   style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 0, 0, 0))),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 72, 47, 0),
+                  )),
               Text(widget.account.name ?? "User",
                   style: TextStyle(
-                      fontSize: 16, color: const Color.fromARGB(179, 0, 0, 0))),
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 72, 47, 0),
+                  )),
             ],
           ),
         ),
@@ -114,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen>
                       borderRadius: BorderRadius.circular(30),
                       boxShadow: [
                         BoxShadow(
-                            color: Colors.black12,
+                            color: Color.fromARGB(255, 72, 47, 0),
                             blurRadius: 5,
                             spreadRadius: 1)
                       ],
@@ -122,7 +125,10 @@ class _HomeScreenState extends State<HomeScreen>
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: "Search",
-                        prefixIcon: Icon(Icons.search, color: Colors.black54),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Color.fromARGB(255, 72, 47, 0),
+                        ),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(vertical: 14),
                       ),
@@ -201,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen>
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+          selectedItemColor: Color.fromARGB(255, 72, 47, 0),
           unselectedItemColor: Colors.grey,
           items: [
             BottomNavigationBarItem(

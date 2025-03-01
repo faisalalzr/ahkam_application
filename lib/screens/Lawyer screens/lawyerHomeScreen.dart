@@ -17,49 +17,51 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
     {"title": "Criminal Defense", "status": "Finished"},
   ];
 
+  var _selectedIndex = 3;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.menu),
-          color: Colors.black,
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CircleAvatar(
-              radius: 18,
-              /* backgroundImage: NetworkImage(
+    return Stack(children: [
+      Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.menu),
+            color: Colors.black,
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 18,
+                /* backgroundImage: NetworkImage(
                           widget.lawyer['profileImage'] ??
                               "https://via.placeholder.com/150"),*/
-            ),
-            SizedBox(width: 12),
-            Text(
-              "Welcome, ${widget.lawyer.name ?? 'Lawyer'}",
-              style: TextStyle(
-                color: const Color.fromARGB(255, 0, 0, 0),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            SizedBox(width: 12),
-            /* Text(
+              SizedBox(width: 12),
+              Text(
+                "Welcome, ${widget.lawyer.name ?? 'Lawyer'}",
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 72, 47, 0),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 12),
+              /* Text(
               widget.lawyer.specialization ?? "Legal Expert",
               style: TextStyle(
                   color: const Color.fromARGB(179, 0, 0, 0), fontSize: 16),
             ),*/
-          ],
+            ],
+          ),
+          backgroundColor: Color(0xFFF5EEDC),
+          foregroundColor: Colors.white,
+          centerTitle: false,
         ),
-        backgroundColor: Color(0xFFF5EEDC),
-        foregroundColor: Colors.white,
-        centerTitle: false,
-      ),
-      body: Stack(children: [
-        Padding(
+        body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,8 +112,53 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
             ],
           ),
         ),
-      ]),
-    );
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+          unselectedItemColor: Colors.grey,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(LucideIcons.bell),
+              label: "Notifications",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(LucideIcons.wallet),
+              label: "Wallet",
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(LucideIcons.messageCircle), label: "Chat"),
+            BottomNavigationBarItem(
+                icon: Icon(LucideIcons.home), label: "Home"),
+          ],
+        ),
+      )
+    ]);
+  }
+
+  void _onItemTapped(int value) {
+    setState(() {
+      _selectedIndex = value;
+
+      //     switch (_selectedIndex) {
+      //       case 0:
+      //         Get.to(NotificationsScreen(account: widget.account));
+      //         break;
+      //       case 1:
+      //         Get.to(WalletScreen(account: widget.account));
+      //         break;
+      //       case 2:
+      //         Get.to(MessagesScreen(account: widget.account));
+      //         break;
+      //
+      //       case 3:
+      //         Get.to(HomeScreen(account: widget.account));
+      //         break;
+      //     }
+      //   });
+      // }
+    });
   }
 }
 
