@@ -1,5 +1,7 @@
 import 'package:chat/models/account.dart';
 import 'package:chat/models/lawyer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -47,6 +49,40 @@ class _LawyerDetailsScreenState extends State<LawyerDetailsScreen> {
         _selectedTime = picked;
         _timeController.text = '${picked.format(context)}';
       });
+    }
+  }
+
+  Future<void> _sendRequest() async {
+    if (_selectedDate == null || _selectedTime == null) {
+      // Show an error if date or time is not selected
+      Get.snackbar('Error', 'Please select both a date and time.');
+      return;
+    }
+
+    // Get the current user (assuming the user is logged in)
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      Get.snackbar('Error', 'You must be logged in to send a request.');
+      return;
+    }
+
+    // Create a request object
+    final request = {
+      'userId': currentUser.uid,
+      'lawyerId': widget.lawyer!.uid,
+      'date': _selectedDate!.toIso8601String(),
+      'time': _selectedTime!.format(context),
+      'status': 'Pending',
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+
+    // Save the request to Firestore
+    try {
+      await FirebaseFirestore.instance.collection('requests').add(request);
+      Get.snackbar('Success', 'Consultation request sent successfully.');
+      Get.back(); // Close the dialog
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to send request: $e');
     }
   }
 
@@ -167,6 +203,7 @@ class _LawyerDetailsScreenState extends State<LawyerDetailsScreen> {
                                     // Ensure both date and time are selected
                                     if (_selectedDate != null &&
                                         _selectedTime != null) {
+                                      _sendRequest();
                                       navigator?.pop(context);
                                       showDialog(
                                         context: context,

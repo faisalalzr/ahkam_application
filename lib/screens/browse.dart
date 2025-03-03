@@ -11,7 +11,8 @@ class BrowseLawyersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Browse Lawyers")),
+      appBar: AppBar(
+          backgroundColor: Color(0xFFF5EEDC), title: Text("Browse Lawyers")),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('account').snapshots(),
         builder: (context, snapshot) {
@@ -35,7 +36,7 @@ class BrowseLawyersScreen extends StatelessWidget {
               var lawyerData = lawyers[index].data() as Map<String, dynamic>;
 
               // Map Firestore data to Lawyer model
-              var lawyer = Lawyer(
+              Lawyer lawyer = Lawyer(
                 uid: lawyers[index].id,
                 name: lawyerData['name'] ?? 'unkown',
                 email: lawyerData['email'] ?? 'unknown',

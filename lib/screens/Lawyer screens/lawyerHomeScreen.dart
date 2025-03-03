@@ -1,6 +1,11 @@
 import 'package:chat/models/lawyer.dart';
+import 'package:chat/screens/Lawyer%20screens/lawSuitDetails.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+
+import '../../widgets/lawsuitcard.dart';
 
 class LawyerHomeScreen extends StatefulWidget {
   const LawyerHomeScreen({super.key, required this.lawyer});
@@ -11,13 +16,46 @@ class LawyerHomeScreen extends StatefulWidget {
 }
 
 class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  var _selectedIndex = 3;
+
   final List<Map<String, String>> lawsuits = [
     {"title": "Corporate Fraud Case", "status": "Active"},
     {"title": "Divorce Settlement", "status": "Waiting"},
     {"title": "Criminal Defense", "status": "Finished"},
   ];
 
-  var _selectedIndex = 3;
+  Future<List<Map<String, dynamic>>> fetchRequests() async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('requests')
+        .where('lawyerId', isEqualTo: widget.lawyer.uid)
+        .get();
+
+    // Include the document id in the data
+    return querySnapshot.docs
+        .map((doc) => {
+              'id': doc.id, // Store the document id
+              ...doc.data() as Map<String, dynamic>, // Store the document data
+            })
+        .toList();
+  }
+
+  // Handle accepting a request
+  Future<void> acceptRequest(String requestId) async {
+    await _firestore.collection('requests').doc(requestId).update({
+      'status': 'Accepted',
+    });
+
+    // Create a chat session (you can implement this logic)
+    // For example, create a new document in the 'chats' collection
+  }
+
+  // Handle rejecting a request
+  Future<void> rejectRequest(String requestId) async {
+    await _firestore.collection('requests').doc(requestId).update({
+      'status': 'Rejected',
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +88,6 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
                 ),
               ),
               SizedBox(width: 12),
-              /* Text(
-              widget.lawyer.specialization ?? "Legal Expert",
-              style: TextStyle(
-                  color: const Color.fromARGB(179, 0, 0, 0), fontSize: 16),
-            ),*/
             ],
           ),
           backgroundColor: Color(0xFFF5EEDC),
@@ -68,7 +101,7 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
             children: [
               SizedBox(height: 20),
 
-              // Status Section
+              // old Status Section
               Text('Case Status',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
@@ -89,6 +122,112 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
                       icon: LucideIcons.briefcase),
                 ],
               ),
+              Text('Consultation Requests',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+              SizedBox(height: 10),
+              Expanded(
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                // Fetching Requests
+                future: fetchRequests(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error fetching requests'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No requests yet.'));
+                  }
+
+                  List<Map<String, dynamic>> requests = snapshot.data!;
+
+                  return ListView.builder(
+                    itemCount: requests.length,
+                    itemBuilder: (context, index) {
+                      final request = requests[index];
+
+                      // Fetch the username asynchronously inside a FutureBuilder
+                      return FutureBuilder<DocumentSnapshot>(
+                        future: _firestore
+                            .collection('account')
+                            .doc(request['userId'])
+                            .get(),
+                        builder: (context, userSnapshot) {
+                          if (userSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ListTile(
+                              title: Text('Loading user...'),
+                              subtitle: CircularProgressIndicator(),
+                            );
+                          } else if (userSnapshot.hasError) {
+                            return ListTile(
+                              title: Text('Error fetching user'),
+                              subtitle: Text(userSnapshot.error.toString()),
+                            );
+                          } else if (!userSnapshot.hasData ||
+                              !userSnapshot.data!.exists) {
+                            return ListTile(
+                              title: Text('User not found'),
+                              subtitle: Text('No user data available'),
+                            );
+                          }
+
+                          // Debugging: Log the user document
+                          print(
+                              "Fetched user document: ${userSnapshot.data!.data()}");
+
+                          // Safely access the "name" field
+                          String username =
+                              userSnapshot.data!['name'] ?? 'Unknown User';
+
+                          return ListTile(
+                            title: Text('Request from $username'),
+                            subtitle: Text(
+                                'Date: ${request['date']}, Time: ${request['time']}'),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (request['status'] == 'Pending')
+                                  IconButton(
+                                    icon:
+                                        Icon(Icons.check, color: Colors.green),
+                                    onPressed: () async {
+                                      acceptRequest(request['id']);
+                                      setState(
+                                          () {}); // Rebuild UI after updating the request
+                                    },
+                                  ),
+                                if (request['status'] == 'Pending')
+                                  IconButton(
+                                    icon: Icon(Icons.close, color: Colors.red),
+                                    onPressed: () async {
+                                      rejectRequest(request['id']);
+                                      setState(
+                                          () {}); // Rebuild UI after updating the request
+                                    },
+                                  ),
+                                Text(
+                                  request['status'],
+                                  style: TextStyle(
+                                    color: request['status'] == 'Accepted'
+                                        ? Colors.green
+                                        : request['status'] == 'Rejected'
+                                            ? Colors.red
+                                            : Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              )),
+
+              ////////////////////////////////////////////////
 
               SizedBox(height: 20),
 
@@ -140,24 +279,6 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
   void _onItemTapped(int value) {
     setState(() {
       _selectedIndex = value;
-
-      //     switch (_selectedIndex) {
-      //       case 0:
-      //         Get.to(NotificationsScreen(account: widget.account));
-      //         break;
-      //       case 1:
-      //         Get.to(WalletScreen(account: widget.account));
-      //         break;
-      //       case 2:
-      //         Get.to(MessagesScreen(account: widget.account));
-      //         break;
-      //
-      //       case 3:
-      //         Get.to(HomeScreen(account: widget.account));
-      //         break;
-      //     }
-      //   });
-      // }
     });
   }
 }
@@ -192,39 +313,6 @@ class StatusBadge extends StatelessWidget {
             style: TextStyle(color: color, fontWeight: FontWeight.bold),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// Custom Widget for Lawsuit Card
-class LawsuitCard extends StatelessWidget {
-  final String title;
-  final String status;
-
-  const LawsuitCard({super.key, required this.title, required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    Color statusColor = status == 'Finished'
-        ? Colors.green
-        : status == 'Waiting'
-            ? Colors.orange
-            : Colors.blue;
-
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(12),
-        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text("Status: $status", style: TextStyle(color: statusColor)),
-        trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
-        onTap: () {
-          // Navigate to lawsuit details
-          print('$title tapped');
-        },
       ),
     );
   }
