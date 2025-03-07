@@ -1,13 +1,8 @@
-import 'package:chat/screens/home.dart';
-import 'package:chat/screens/messages.dart';
-import 'package:chat/screens/wallet.dart';
 import 'package:chat/widgets/chat_input.dart';
 import 'package:chat/widgets/message_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;

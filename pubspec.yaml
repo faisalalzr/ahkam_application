@@ -48,6 +48,7 @@ dependencies:
   cloud_functions: ^5.3.2
   lucide_icons: ^0.257.0
   get: ^4.6.5
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

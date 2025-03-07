@@ -10,7 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import '../models/account.dart';
 
 class MessagesScreen extends StatefulWidget {
@@ -26,27 +26,31 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var _selectedIndex = 2;
-    void _onItemTapped(int index) {
+    var selectedIndex = 2;
+    void onItemTapped(int index) {
       setState(() {
-        _selectedIndex = index;
-        switch (_selectedIndex) {
+        selectedIndex = index;
+        switch (selectedIndex) {
           case 0:
             Get.to(NotificationsScreen(
               account: widget.account,
             ));
             break;
           case 1:
-            Get.to(WalletScreen(account: widget.account));
+            Get.to(WalletScreen(account: widget.account),
+                transition: Transition.noTransition);
             break;
           case 2:
-            Get.to(MessagesScreen(account: widget.account));
+            Get.to(MessagesScreen(account: widget.account),
+                transition: Transition.noTransition);
             break;
           case 3:
-            Get.to(requestsScreen(account: widget.account));
+            Get.to(RequestsScreen(account: widget.account),
+                transition: Transition.noTransition);
             break;
           case 4:
-            Get.to(HomeScreen(account: widget.account));
+            Get.to(HomeScreen(account: widget.account),
+                transition: Transition.noTransition);
             break;
         }
       });
@@ -54,9 +58,20 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Messages"),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
+        toolbarHeight: 70,
+        title: Text("Messages",
+            style: GoogleFonts.lato(
+              textStyle: TextStyle(
+                fontSize: 40,
+                color: Color.fromARGB(255, 72, 47, 0),
+              ),
+            )),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: const Color(0xFFF5EEDC),
         automaticallyImplyLeading: false,
-        backgroundColor: Color(0xFFF5EEDC),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('chats').snapshots(),
@@ -82,8 +97,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: selectedIndex,
+        onTap: onItemTapped,
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(

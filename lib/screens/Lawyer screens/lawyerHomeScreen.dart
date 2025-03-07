@@ -1,8 +1,6 @@
 import 'package:chat/models/lawyer.dart';
-import 'package:chat/screens/Lawyer%20screens/lawSuitDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../widgets/lawsuitcard.dart';
@@ -19,12 +17,6 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var _selectedIndex = 3;
 
-  final List<Map<String, String>> lawsuits = [
-    {"title": "Corporate Fraud Case", "status": "Active"},
-    {"title": "Divorce Settlement", "status": "Waiting"},
-    {"title": "Criminal Defense", "status": "Finished"},
-  ];
-
   Future<List<Map<String, dynamic>>> fetchRequests() async {
     QuerySnapshot querySnapshot = await _firestore
         .collection('requests')
@@ -39,6 +31,11 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
             })
         .toList();
   }
+
+  final List<Map<String, dynamic>> lawsuits = [
+    {"title": "Corporate Fraud Case", "status": "Active"},
+    {"title": "Divorce Settlement", "status": "Waiting"},
+  ];
 
   // Handle accepting a request
   Future<void> acceptRequest(String requestId) async {
@@ -95,10 +92,9 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
           centerTitle: false,
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            padding: const EdgeInsets.all(16.0),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SizedBox(height: 20),
 
               // old Status Section
@@ -127,68 +123,60 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
 
               SizedBox(height: 10),
               Expanded(
-                  child: FutureBuilder<List<Map<String, dynamic>>>(
-                // Fetching Requests
-                future: fetchRequests(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error fetching requests'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No requests yet.'));
-                  }
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  // Fetching Requests
+                  future: fetchRequests(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error fetching requests'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No requests yet.'));
+                    }
 
-                  List<Map<String, dynamic>> requests = snapshot.data!;
+                    List<Map<String, dynamic>> requests = snapshot.data!;
 
-                  return ListView.builder(
-                    itemCount: requests.length,
-                    itemBuilder: (context, index) {
-                      final request = requests[index];
+                    return ListView.builder(
+                      itemCount: requests.length,
+                      itemBuilder: (context, index) {
+                        final request = requests[index];
 
-                      // Fetch the username asynchronously inside a FutureBuilder
-                      return FutureBuilder<DocumentSnapshot>(
-                        future: _firestore
-                            .collection('account')
-                            .doc(request['userId'])
-                            .get(),
-                        builder: (context, userSnapshot) {
-                          if (userSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return ListTile(
-                              title: Text('Loading user...'),
-                              subtitle: CircularProgressIndicator(),
-                            );
-                          } else if (userSnapshot.hasError) {
-                            return ListTile(
-                              title: Text('Error fetching user'),
-                              subtitle: Text(userSnapshot.error.toString()),
-                            );
-                          } else if (!userSnapshot.hasData ||
-                              !userSnapshot.data!.exists) {
-                            return ListTile(
-                              title: Text('User not found'),
-                              subtitle: Text('No user data available'),
-                            );
-                          }
+                        // Fetch the username asynchronously inside a FutureBuilder
+                        return FutureBuilder<DocumentSnapshot>(
+                            future: _firestore
+                                .collection('account')
+                                .doc(request['userId'])
+                                .get(),
+                            builder: (context, userSnapshot) {
+                              if (userSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return ListTile(
+                                  title: Text('Loading user...'),
+                                  subtitle: CircularProgressIndicator(),
+                                );
+                              } else if (userSnapshot.hasError) {
+                                return ListTile(
+                                  title: Text('Error fetching user'),
+                                  subtitle: Text(userSnapshot.error.toString()),
+                                );
+                              } else if (!userSnapshot.hasData ||
+                                  !userSnapshot.data!.exists) {
+                                return ListTile(
+                                  title: Text('User not found'),
+                                  subtitle: Text('No user data available'),
+                                );
+                              }
 
-                          // Debugging: Log the user document
-                          print(
-                              "Fetched user document: ${userSnapshot.data!.data()}");
+                              // Safely access the "name" field
+                              String username =
+                                  userSnapshot.data!['name'] ?? 'Unknown User';
 
-                          // Safely access the "name" field
-                          String username =
-                              userSnapshot.data!['name'] ?? 'Unknown User';
+                              return LawsuitCard(
+                                status: request['status'],
+                                title: request['title'],
 
-                          return ListTile(
-                            title: Text('Request from $username'),
-                            subtitle: Text(
-                                'Date: ${request['date']}, Time: ${request['time']}'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (request['status'] == 'Pending')
-                                  IconButton(
+                                /*  IconButton(
                                     icon:
                                         Icon(Icons.check, color: Colors.green),
                                     onPressed: () async {
@@ -196,61 +184,15 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
                                       setState(
                                           () {}); // Rebuild UI after updating the request
                                     },
-                                  ),
-                                if (request['status'] == 'Pending')
-                                  IconButton(
-                                    icon: Icon(Icons.close, color: Colors.red),
-                                    onPressed: () async {
-                                      rejectRequest(request['id']);
-                                      setState(
-                                          () {}); // Rebuild UI after updating the request
-                                    },
-                                  ),
-                                Text(
-                                  request['status'],
-                                  style: TextStyle(
-                                    color: request['status'] == 'Accepted'
-                                        ? Colors.green
-                                        : request['status'] == 'Rejected'
-                                            ? Colors.red
-                                            : Colors.orange,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-              )),
-
-              ////////////////////////////////////////////////
-
-              SizedBox(height: 20),
-
-              // Lawsuits List
-              Text('Your Cases',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              Expanded(
-                child: lawsuits.isEmpty
-                    ? Center(child: Text("No active cases yet."))
-                    : ListView.builder(
-                        itemCount: lawsuits.length,
-                        itemBuilder: (context, index) {
-                          final caseData = lawsuits[index];
-                          return LawsuitCard(
-                              title: caseData["title"]!,
-                              status: caseData["status"]!);
-                        },
-                      ),
+                                  ),*/
+                              );
+                            });
+                      },
+                    );
+                  },
+                ),
               ),
-            ],
-          ),
-        ),
+            ])),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
@@ -272,7 +214,7 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
                 icon: Icon(LucideIcons.home), label: "Home"),
           ],
         ),
-      )
+      ),
     ]);
   }
 

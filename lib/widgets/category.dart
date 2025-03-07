@@ -1,6 +1,7 @@
 import 'package:chat/screens/browse.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -27,7 +28,7 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(BrowseLawyersScreen());
+        Get.to(BrowseLawyersScreen(null));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -38,10 +39,19 @@ class CategoryCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(category.icon, size: 32, color: Colors.brown),
+            Icon(
+              category.icon,
+              size: 32,
+              color: Color.fromARGB(255, 72, 47, 0),
+            ),
             SizedBox(height: 5),
             Text(category.name,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                style: GoogleFonts.lato(
+                  textStyle: TextStyle(
+                    fontSize: 12,
+                    color: Color.fromARGB(255, 72, 47, 0),
+                  ),
+                )),
           ],
         ),
       ),

@@ -28,7 +28,7 @@ class LawsuitCard extends StatelessWidget {
         subtitle: Text("Status: $status", style: TextStyle(color: statusColor)),
         trailing: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
         onTap: () {
-          Get.to(Lawsuit());
+          Get.to(Lawsuit(), transition: Transition.noTransition);
         },
       ),
     );

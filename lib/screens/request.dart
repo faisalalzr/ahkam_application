@@ -4,117 +4,156 @@ import 'package:chat/screens/messages.dart';
 import 'package:chat/screens/notification.dart';
 import 'package:chat/screens/wallet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-import '../models/account.dart';
-
-class requestsScreen extends StatefulWidget {
-  const requestsScreen({super.key, required this.account});
+class RequestsScreen extends StatefulWidget {
+  const RequestsScreen({super.key, required this.account});
   final Account account;
 
   @override
-  _requestsScreenState createState() => _requestsScreenState();
+  _RequestsScreenState createState() => _RequestsScreenState();
 }
 
-class _requestsScreenState extends State<requestsScreen> {
+class _RequestsScreenState extends State<RequestsScreen> {
   final FirebaseFirestore _lawyerDb = FirebaseFirestore.instance;
-
-  Future<List<Map<String, dynamic>>> fetchLawyerRequests() async {
-    QuerySnapshot querySnapshot = await _lawyerDb.collection('requests').get();
-
-    return querySnapshot.docs
-        .map((doc) => doc.data() as Map<String, dynamic>)
-        .toList();
-  }
-
   int _selectedIndex = 3;
 
+  /// Fetch lawyer requests specific to the user
+  Future<List<Map<String, dynamic>>> fetchLawyerRequests() async {
+    try {
+      QuerySnapshot querySnapshot = await _lawyerDb
+          .collection('requests')
+          .where('userId', isEqualTo: widget.account.uid) // Filter requests
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+    } catch (e) {
+      debugPrint("Error fetching requests: $e");
+      return [];
+    }
+  }
+
+  /// Handles bottom navigation
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      switch (_selectedIndex) {
-        case 0:
-          Get.to(NotificationsScreen(account: widget.account));
-          break;
-        case 1:
-          Get.to(WalletScreen(account: widget.account));
-          break;
-        case 2:
-          Get.to(MessagesScreen(account: widget.account));
-          break;
-        case 3:
-          Get.to(requestsScreen(account: widget.account));
-          break;
-        case 4:
-          Get.to(HomeScreen(account: widget.account));
-          break;
-      }
-    });
+    if (index == _selectedIndex) return;
+
+    Widget nextScreen;
+    switch (index) {
+      case 0:
+        nextScreen = NotificationsScreen(account: widget.account);
+        break;
+      case 1:
+        nextScreen = WalletScreen(account: widget.account);
+        break;
+      case 2:
+        nextScreen = MessagesScreen(account: widget.account);
+        break;
+      case 3:
+        return; // Prevent reloading the same screen
+      case 4:
+      default:
+        nextScreen = HomeScreen(account: widget.account);
+        break;
+    }
+
+    Get.offAll(() => nextScreen, transition: Transition.noTransition);
+  }
+
+  /// Creates a request card widget
+  Widget getRequestCard(
+      {required String title,
+      required String lawyerName,
+      required String status}) {
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 7, horizontal: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(20),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(lawyerName,
+                style: const TextStyle(fontWeight: FontWeight.normal)),
+            Text(
+              "Status: $status",
+              style: TextStyle(
+                color: status == 'pending'
+                    ? Colors.amber
+                    : status == 'Accepted'
+                        ? Colors.green
+                        : Colors.red,
+              ),
+            ),
+          ],
+        ),
+        trailing: status == 'Accepted'
+            ? GestureDetector(
+                child: SizedBox(
+                  width: 90, // Prevent overflow
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: const [
+                      Text('Start Chat', style: TextStyle(color: Colors.blue)),
+                    ],
+                  ),
+                ),
+              )
+            : null,
+        onTap: () {
+          if (status == 'Accepted') {
+            Get.to(() =>
+                MessagesScreen(account: widget.account)); // Navigate to chat
+          }
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Lawyer Requests"),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
+        toolbarHeight: 70,
+        title: Text("Requests",
+            style: GoogleFonts.lato(
+              textStyle: TextStyle(
+                fontSize: 40,
+                color: Color.fromARGB(255, 72, 47, 0),
+              ),
+            )),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: const Color(0xFFF5EEDC),
         automaticallyImplyLeading: false,
-        backgroundColor: Color(0xFFF5EEDC),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchLawyerRequests(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error fetching requests"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("No requests sent."));
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError || snapshot.data == null) {
+            return const Center(child: Text("Error fetching requests"));
+          } else if (snapshot.data!.isEmpty) {
+            return const Center(child: Text("No requests sent."));
           }
 
-          List<Map<String, dynamic>> lawyerRequests = snapshot.data!;
-
           return ListView.builder(
-            itemCount: lawyerRequests.length,
+            itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final request = lawyerRequests[index];
-
-              return ListTile(
-                leading: CircleAvatar(
-                    //     backgroundImage: NetworkImage(request['profileImage']),
-                    ),
-                title: Text(request['name'] ?? 'name',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(request['specialization'] ?? 'specs'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      request['status'],
-                      style: TextStyle(
-                        color: request['status'] == 'Accepted'
-                            ? Colors.green
-                            : request['status'] == 'Rejected'
-                                ? Colors.red
-                                : Colors.orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (request['status'] == 'Pending')
-                      IconButton(
-                        icon: Icon(Icons.cancel, color: Colors.red),
-                        onPressed: () async {
-                          await _lawyerDb
-                              .collection('requests')
-                              .doc(request['id'])
-                              .delete();
-                          setState(() {});
-                        },
-                      ),
-                  ],
-                ),
+              final request = snapshot.data![index];
+              return getRequestCard(
+                title: request['title'] ?? 'Unknown title',
+                lawyerName: request['lawyerName'] ?? 'Lawyer\'s Name',
+                status: request['status'] ?? 'Unknown Status',
               );
             },
           );
@@ -124,7 +163,7 @@ class _requestsScreenState extends State<requestsScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        items: [
+        items: const [
           BottomNavigationBarItem(
               icon: Icon(LucideIcons.bell), label: "Notifications"),
           BottomNavigationBarItem(

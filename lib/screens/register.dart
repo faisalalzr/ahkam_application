@@ -1,13 +1,9 @@
-import 'package:chat/screens/home.dart';
 import 'package:chat/screens/login.dart';
 import 'package:chat/screens/new.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import '../models/lawyer.dart';
-import '../models/account.dart';
-import 'Lawyer screens/lawyerHomeScreen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

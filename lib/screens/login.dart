@@ -39,8 +39,9 @@ class _LoginScreenState extends State<LoginScreen> {
           .limit(1)
           .get();
 
-      if (userQuery.docs.isEmpty)
+      if (userQuery.docs.isEmpty) {
         throw Exception("User not found in Firestore");
+      }
 
       DocumentSnapshot userDoc = userQuery.docs.first;
       bool isLawyer =
@@ -48,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (userDoc.exists) {
         if (isLawyer == true) {
-          Get.offAll(
+          Get.to(
               () => LawyerHomeScreen(lawyer: Lawyer(email: AnyUser!.email!)));
         } else {
           Get.to(() => HomeScreen(account: Account(email: AnyUser!.email!)));

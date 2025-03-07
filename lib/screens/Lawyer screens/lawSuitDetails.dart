@@ -12,7 +12,7 @@ class _LawsuitState extends State<Lawsuit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Color(0xFFF5EEDC),
       ),
       body: Column(
         children: [

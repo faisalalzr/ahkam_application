@@ -14,8 +14,10 @@ class LawyerDetailsScreen extends StatefulWidget {
 }
 
 class _LawyerDetailsScreenState extends State<LawyerDetailsScreen> {
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _timeController = TextEditingController();
+  final TextEditingController _titleCont = TextEditingController();
+  final TextEditingController _descriptionCont = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
@@ -47,7 +49,7 @@ class _LawyerDetailsScreenState extends State<LawyerDetailsScreen> {
     if (picked != null && picked != _selectedTime) {
       setState(() {
         _selectedTime = picked;
-        _timeController.text = '${picked.format(context)}';
+        _timeController.text = picked.format(context);
       });
     }
   }
@@ -70,6 +72,8 @@ class _LawyerDetailsScreenState extends State<LawyerDetailsScreen> {
     final request = {
       'userId': currentUser.uid,
       'lawyerId': widget.lawyer!.uid,
+      'title': _titleCont.text,
+      'desc': _descriptionCont.text,
       'date': _selectedDate!.toIso8601String(),
       'time': _selectedTime!.format(context),
       'status': 'Pending',
@@ -133,7 +137,7 @@ class _LawyerDetailsScreenState extends State<LawyerDetailsScreen> {
               SizedBox(height: 16),
 
               Text(
-                '${widget.lawyer?.desc ?? 'No description available'}',
+                widget.lawyer?.desc ?? 'No description available',
                 style: TextStyle(
                   fontSize: 16,
                   height: 1.5,
@@ -149,7 +153,7 @@ class _LawyerDetailsScreenState extends State<LawyerDetailsScreen> {
                 ),
               ),
               Text(
-                'Phone: ${widget.lawyer!.number!}\nEmail: ${widget.lawyer!.email!}',
+                'Phone: ${widget.lawyer!.number!}\nEmail: ${widget.lawyer!.email}',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -172,6 +176,31 @@ class _LawyerDetailsScreenState extends State<LawyerDetailsScreen> {
                           content: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // title
+                              TextField(
+                                controller: _titleCont,
+                                decoration: InputDecoration(
+                                  labelText: ' title',
+                                  suffixIcon: Icon(Icons.abc),
+                                ),
+                              ),
+                              SizedBox(height: 16),
+
+                              // description
+                              TextFormField(
+                                maxLines: null, // Allows multiline input
+                                keyboardType: TextInputType.multiline,
+                                decoration: InputDecoration(
+                                  labelText: 'Description',
+                                  suffixIcon: Icon(Icons.abc),
+                                  hintText:
+                                      "include all details of you case here",
+                                  border: OutlineInputBorder(),
+                                ),
+                                controller: _descriptionCont,
+                              ),
+                              SizedBox(height: 16),
+
                               // Date Picker
                               TextField(
                                 controller: _dateController,

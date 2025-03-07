@@ -3,12 +3,9 @@ import 'package:chat/screens/home.dart';
 import 'package:chat/screens/messages.dart';
 import 'package:chat/screens/request.dart';
 import 'package:chat/screens/wallet.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-
-import '../models/account.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key, required this.account});
@@ -47,19 +44,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       _selectedIndex = index;
       switch (_selectedIndex) {
         case 0:
-          Get.to(NotificationsScreen(account: widget.account));
+          Get.to(NotificationsScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
         case 1:
-          Get.to(WalletScreen(account: widget.account));
+          Get.to(WalletScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
         case 2:
-          Get.to(MessagesScreen(account: widget.account));
+          Get.to(MessagesScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
         case 3:
-          Get.to(requestsScreen(account: widget.account));
+          Get.to(RequestsScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
         case 4:
-          Get.to(HomeScreen(account: widget.account));
+          Get.to(HomeScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
       }
     });
@@ -69,8 +71,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFF5EEDC),
-        title: Text("Notifications"),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
+        toolbarHeight: 70,
+        title: Text("Notifications",
+            style: TextStyle(
+              fontSize: 40,
+              fontFamily: 'Times New Roman',
+              color: Color.fromARGB(255, 72, 47, 0),
+            )),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: const Color(0xFFF5EEDC),
         automaticallyImplyLeading: false,
       ),
       body: ListView.builder(

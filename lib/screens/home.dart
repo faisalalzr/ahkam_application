@@ -1,6 +1,5 @@
 import 'package:chat/models/account.dart';
 import 'package:chat/screens/browse.dart';
-import 'package:chat/screens/chat.dart';
 import 'package:chat/screens/messages.dart';
 import 'package:chat/screens/notification.dart';
 import 'package:chat/screens/profile.dart';
@@ -8,6 +7,7 @@ import 'package:chat/screens/request.dart';
 import 'package:chat/screens/wallet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:get/get.dart';
 import '../widgets/lawyer_card.dart';
@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen>
   late Animation<double> _animation;
   bool isSideBarOpen = false;
   int _selectedIndex = 4;
-
+  TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -57,19 +57,24 @@ class _HomeScreenState extends State<HomeScreen>
 
       switch (_selectedIndex) {
         case 0:
-          Get.to(NotificationsScreen(account: widget.account));
+          Get.to(NotificationsScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
         case 1:
-          Get.to(WalletScreen(account: widget.account));
+          Get.to(WalletScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
         case 2:
-          Get.to(MessagesScreen(account: widget.account));
+          Get.to(MessagesScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
         case 3:
-          Get.to(requestsScreen(account: widget.account));
+          Get.to(RequestsScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
         case 4:
-          Get.to(HomeScreen(account: widget.account));
+          Get.to(HomeScreen(account: widget.account),
+              transition: Transition.noTransition);
           break;
       }
     });
@@ -84,22 +89,23 @@ class _HomeScreenState extends State<HomeScreen>
           backgroundColor: Color(0xFFF5EEDC),
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.menu, color: const Color.fromARGB(255, 0, 0, 0)),
+            icon: Icon(
+              Icons.menu,
+              color: Color.fromARGB(255, 72, 47, 0),
+            ),
             onPressed: _toggleSidebar,
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text("Welcome",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 72, 47, 0),
-                  )),
-              Text(widget.account.name ?? "User",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: const Color.fromARGB(255, 72, 47, 0),
+              Text('Welcome, ${widget.account.name ?? 'user'}',
+                  style: GoogleFonts.lato(
+                    textStyle: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 72, 47, 0),
+                    ),
                   )),
             ],
           ),
@@ -123,22 +129,30 @@ class _HomeScreenState extends State<HomeScreen>
                       ],
                     ),
                     child: TextField(
+                      controller: searchController,
                       decoration: InputDecoration(
                         hintText: "Search",
-                        prefixIcon: Icon(
-                          Icons.search,
+                        prefixIcon: IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: () {
+                            Get.to(BrowseLawyersScreen(searchController.text),
+                                transition: Transition.noTransition);
+                          },
                           color: Color.fromARGB(255, 72, 47, 0),
                         ),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(vertical: 14),
                       ),
-                      onTap: () => Get.to(BrowseLawyersScreen()),
                     ),
                   ),
                   SizedBox(height: 20),
                   Text("Categories",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                      style: GoogleFonts.lato(
+                        textStyle: TextStyle(
+                          fontSize: 30,
+                          color: Color.fromARGB(255, 72, 47, 0),
+                        ),
+                      )),
                   SizedBox(height: 10),
                   GridView.builder(
                     shrinkWrap: true,
@@ -156,8 +170,12 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   SizedBox(height: 20),
                   Text("Top Lawyers",
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                      style: GoogleFonts.lato(
+                        textStyle: TextStyle(
+                          fontSize: 30,
+                          color: Color.fromARGB(255, 72, 47, 0),
+                        ),
+                      )),
                   SizedBox(height: 10),
                   Column(
                     children:
@@ -179,22 +197,41 @@ class _HomeScreenState extends State<HomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Menu",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold)),
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                            fontSize: 25,
+                            color: Color.fromARGB(255, 72, 47, 0),
+                          ),
+                        )),
                     SizedBox(height: 20),
                     ListTile(
-                      leading: Icon(Icons.person, color: Colors.white),
+                      leading: Icon(
+                        Icons.person,
+                        color: Color.fromARGB(255, 72, 47, 0),
+                      ),
                       title: Text("Profile",
-                          style: TextStyle(color: Colors.white)),
-                      onTap: () =>
-                          Get.to(ProfileScreen(account: widget.account!)),
+                          style: GoogleFonts.lato(
+                            textStyle: TextStyle(
+                              fontSize: 17,
+                              color: Color.fromARGB(255, 72, 47, 0),
+                            ),
+                          )),
+                      onTap: () => Get.to(
+                          ProfileScreen(account: widget.account),
+                          transition: Transition.noTransition),
                     ),
                     ListTile(
-                      leading: Icon(Icons.settings, color: Colors.white),
+                      leading: Icon(
+                        Icons.settings,
+                        color: Color.fromARGB(255, 72, 47, 0),
+                      ),
                       title: Text("Settings",
-                          style: TextStyle(color: Colors.white)),
+                          style: GoogleFonts.lato(
+                            textStyle: TextStyle(
+                              fontSize: 17,
+                              color: Color.fromARGB(255, 72, 47, 0),
+                            ),
+                          )),
                       onTap: () {},
                     ),
                   ],
