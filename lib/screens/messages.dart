@@ -4,14 +4,11 @@ import 'package:chat/screens/home.dart';
 import 'package:chat/screens/notification.dart';
 import 'package:chat/screens/request.dart';
 import 'package:chat/screens/wallet.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../models/account.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key, required this.account});

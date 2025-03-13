@@ -32,11 +32,6 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
         .toList();
   }
 
-  final List<Map<String, dynamic>> lawsuits = [
-    {"title": "Corporate Fraud Case", "status": "Active"},
-    {"title": "Divorce Settlement", "status": "Waiting"},
-  ];
-
   // Handle accepting a request
   Future<void> acceptRequest(String requestId) async {
     await _firestore.collection('requests').doc(requestId).update({
@@ -58,13 +53,14 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
   Widget build(BuildContext context) {
     return Stack(children: [
       Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.menu),
-            color: Colors.black,
+        drawer: Drawer(
+          backgroundColor: Color(0xFFF5EEDC),
+          child: Column(
+            children: [],
           ),
+        ),
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,6 +114,7 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
                       icon: LucideIcons.briefcase),
                 ],
               ),
+              SizedBox(height: 20),
               Text('Consultation Requests',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
 
@@ -128,7 +125,7 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
                   future: fetchRequests(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center();
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error fetching requests'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -151,10 +148,7 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
                             builder: (context, userSnapshot) {
                               if (userSnapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return ListTile(
-                                  title: Text('Loading user...'),
-                                  subtitle: CircularProgressIndicator(),
-                                );
+                                return ListTile();
                               } else if (userSnapshot.hasError) {
                                 return ListTile(
                                   title: Text('Error fetching user'),
@@ -173,19 +167,9 @@ class _LawyerHomeScreenState extends State<LawyerHomeScreen> {
                                   userSnapshot.data!['name'] ?? 'Unknown User';
 
                               return LawsuitCard(
-                                status: request['status'],
-                                title: request['title'],
-
-                                /*  IconButton(
-                                    icon:
-                                        Icon(Icons.check, color: Colors.green),
-                                    onPressed: () async {
-                                      acceptRequest(request['id']);
-                                      setState(
-                                          () {}); // Rebuild UI after updating the request
-                                    },
-                                  ),*/
-                              );
+                                  status: request['status'],
+                                  title: request['title'],
+                                  rid: request['rid'] ?? '');
                             });
                       },
                     );

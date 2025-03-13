@@ -19,7 +19,7 @@ class RequestsScreen extends StatefulWidget {
 
 class _RequestsScreenState extends State<RequestsScreen> {
   final FirebaseFirestore _lawyerDb = FirebaseFirestore.instance;
-  int _selectedIndex = 3;
+  final int _selectedIndex = 3;
 
   /// Fetch lawyer requests specific to the user
   Future<List<Map<String, dynamic>>> fetchLawyerRequests() async {

@@ -17,11 +17,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmpasswordController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false; // To handle loading state
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_passwordController != _confirmpasswordController) return;
 
     setState(() {
       _isLoading = true;
@@ -29,6 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       // Register the user with Firebase Authentication
+
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -150,6 +154,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             size: 21,
                           ),
                           labelText: "Password",
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 14, horizontal: 16),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Password cannot be empty.";
+                          } else if (value.length < 6) {
+                            return "Password must be at least 6 characters.";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      // confirm Password Field
+                      TextFormField(
+                        controller: _confirmpasswordController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Color.fromARGB(255, 72, 47, 0),
+                            size: 21,
+                          ),
+                          labelText: "confirm password",
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
